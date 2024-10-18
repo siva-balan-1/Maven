@@ -1,61 +1,8 @@
-pipeline {
-    agent any
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-    environment {
-        MAVEN_HOME = tool 'Maven'
-        JAVA_HOME = tool 'JDK'
-        PROJECT_NAME = 'MyJavaApp'
-    }
+    <!-- Add your project's details here -->
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/siva-balan-1/Maven'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                dir('my-app') {  // Change 'my-app' to the directory containing the pom.xml, if applicable
-                    sh "${MAVEN_HOME}/bin/mvn clean compile"
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                dir('my-app') {
-                    sh "${MAVEN_HOME}/bin/mvn test"
-                }
-            }
-        }
-
-        stage('Package') {
-            steps {
-                dir('my-app') {
-                    sh "${MAVEN_HOME}/bin/mvn package"
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying the application...'
-            }
-        }
-    }
-
-    post {
-        always {
-            node {
-                cleanWs()
-            }
-        }
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
-        }
-    }
-}
