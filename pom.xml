@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = tool 'Maven'
+        JAVA_HOME = tool 'JDK'
+        PROJECT_NAME = 'MyJavaApp'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/siva-balan-1/Maven'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('my-app') {  // Change 'my-app' to the directory containing the pom.xml, if applicable
+                    sh "${MAVEN_HOME}/bin/mvn clean compile"
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('my-app') {
+                    sh "${MAVEN_HOME}/bin/mvn test"
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('my-app') {
+                    sh "${MAVEN_HOME}/bin/mvn package"
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+            }
+        }
+    }
+
+    post {
+        always {
+            node {
+                cleanWs()
+            }
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
